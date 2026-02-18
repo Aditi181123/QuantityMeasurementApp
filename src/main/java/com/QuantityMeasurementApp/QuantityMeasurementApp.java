@@ -50,56 +50,9 @@ public class QuantityMeasurementApp {
         System.out.println("Same reference ? " + f1.equals(f1));
     }
 
-    /*
-     * UC2: Inches Measurement Equality
-     */
-    public static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        public double getValue() {
-            return value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-
-            Inches inch = (Inches) obj;
-            return Double.compare(this.value, inch.value) == 0;
-        }
-    }
-
-    // UC2 method
-    public static void demonstrateInchEquality() {
-        Scanner sc = new Scanner(System.in);
-
-        System.out.print("Enter first value in inches: ");
-        double v1 = sc.nextDouble();
-
-        System.out.print("Enter second value in inches: ");
-        double v2 = sc.nextDouble();
-
-        System.out.print("Enter third value in inches: ");
-        double v3 = sc.nextDouble();
-
-        Inches i1 = new Inches(v1);
-        Inches i2 = new Inches(v2);
-        Inches i3 = new Inches(v3);
-
-        System.out.println("Same value ? " + i1.equals(i2));
-        System.out.println("Different value ? " + i1.equals(i3));
-        System.out.println("Null Comparison ? " + i1.equals(null));
-        System.out.println("Same reference ? " + i1.equals(i1));
-    }
 
     // MAIN METHOD
     public static void main(String[] args) {
         demonstrateFeetEquality();
-        demonstrateInchEquality();
     }
 }

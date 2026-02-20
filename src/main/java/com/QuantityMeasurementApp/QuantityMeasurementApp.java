@@ -4,102 +4,69 @@ import java.util.Scanner;
 
 public class QuantityMeasurementApp {
 
-    /*
-     * UC1: Feet Measurement Equality
-     */
-    public static class Feet {
-        private final double value;
+	static Scanner sc = new Scanner(System.in);
 
-        public Feet(double value) {
-            this.value = value;
-        }
+	// Generic Equality Method
+	public static void demonstrateLengthEquality(Length l1, Length l2) {
+		System.out.println(l1 + "  and  " + l2);
+		System.out.println("Equal? => " + l1.equals(l2));
+		System.out.println("--------------------------------");
+	}
 
-        public double getValue() {
-            return value;
-        }
+	// UC1: Feet Equality (User Input)
+	public static void demonstrateFeetEquality() {
+		System.out.println("UC1: Feet Equality Test");
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+		System.out.print("Enter first value in FEET: ");
+		double v1 = sc.nextDouble();
 
-            Feet feet = (Feet) obj;
-            return Double.compare(this.value, feet.value) == 0;
-        }
-    }
- // UC1 method
-    public static void demonstrateFeetEquality() {
-        Scanner sc = new Scanner(System.in);
+		System.out.print("Enter second value in FEET: ");
+		double v2 = sc.nextDouble();
 
-        System.out.print("Enter first value in feet: ");
-        double value1 = sc.nextDouble();
+		Length f1 = new Length(v1, Length.LengthUnit.FEET);
+		Length f2 = new Length(v2, Length.LengthUnit.FEET);
 
-        System.out.print("Enter second value in feet: ");
-        double value2 = sc.nextDouble();
+		demonstrateLengthEquality(f1, f2);
+	}
 
-        System.out.print("Enter third value in feet: ");
-        double value3 = sc.nextDouble();
+	// UC2: Inch Equality (User Input)
+	public static void demonstrateInchEquality() {
+		System.out.println("UC2: Inch Equality Test");
 
-        Feet f1 = new Feet(value1);
-        Feet f2 = new Feet(value2);
-        Feet f3 = new Feet(value3);
+		System.out.print("Enter first value in INCH: ");
+		double v1 = sc.nextDouble();
 
-        System.out.println("Same value ? " + f1.equals(f2));
-        System.out.println("Different value ? " + f1.equals(f3));
-        System.out.println("Null Comparison ? " + f1.equals(null));
-        System.out.println("Same reference ? " + f1.equals(f1));
-    }
+		System.out.print("Enter second value in INCH: ");
+		double v2 = sc.nextDouble();
 
-    /*
-     * UC2: Inches Measurement Equality
-     */
-    public static class Inches {
-        private final double value;
+		Length i1 = new Length(v1, Length.LengthUnit.INCH);
+		Length i2 = new Length(v2, Length.LengthUnit.INCH);
 
-        public Inches(double value) {
-            this.value = value;
-        }
+		demonstrateLengthEquality(i1, i2);
+	}
 
-        public double getValue() {
-            return value;
-        }
+	// UC3: Feet ↔ Inch Equality (User Input)
+	public static void demonstrateFeetInchesEquality() {
+		System.out.println("UC3: Feet and Inch Cross Unit Equality Test");
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
+		System.out.print("Enter value in FEET: ");
+		double feet = sc.nextDouble();
 
-            Inches inch = (Inches) obj;
-            return Double.compare(this.value, inch.value) == 0;
-        }
-    }
+		System.out.print("Enter value in INCH: ");
+		double inch = sc.nextDouble();
 
-    // UC2 method
-    public static void demonstrateInchEquality() {
-        Scanner sc = new Scanner(System.in);
+		Length l1 = new Length(feet, Length.LengthUnit.FEET);
+		Length l2 = new Length(inch, Length.LengthUnit.INCH);
 
-        System.out.print("Enter first value in inches: ");
-        double v1 = sc.nextDouble();
+		demonstrateLengthEquality(l1, l2);
+	}
 
-        System.out.print("Enter second value in inches: ");
-        double v2 = sc.nextDouble();
+	// MAIN MENU
+	public static void main(String[] args) {
 
-        System.out.print("Enter third value in inches: ");
-        double v3 = sc.nextDouble();
+		demonstrateFeetEquality();
+		demonstrateInchEquality();
+		demonstrateFeetInchesEquality();
 
-        Inches i1 = new Inches(v1);
-        Inches i2 = new Inches(v2);
-        Inches i3 = new Inches(v3);
-
-        System.out.println("Same value ? " + i1.equals(i2));
-        System.out.println("Different value ? " + i1.equals(i3));
-        System.out.println("Null Comparison ? " + i1.equals(null));
-        System.out.println("Same reference ? " + i1.equals(i1));
-    }
-
-    // MAIN METHOD
-    public static void main(String[] args) {
-        demonstrateFeetEquality();
-        demonstrateInchEquality();
-    }
+	}
 }

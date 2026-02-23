@@ -102,5 +102,27 @@ public class Length {
 
 		return new Length(resultInOriginalUnit, this.unit);
 	}
+	
+	// UC7: Addition with Explicit Target Unit
+	public Length add(Length thatLength, LengthUnit targetUnit) {
+
+	    if (thatLength == null)
+	        throw new IllegalArgumentException("Length cannot be null");
+
+	    if (targetUnit == null)
+	        throw new IllegalArgumentException("Target Unit cannot be null");
+
+	    // Convert both to base unit (inches)
+	    double thisInches = this.unit.toInches(this.value);
+	    double thatInches = thatLength.unit.toInches(thatLength.value);
+
+	    // Add in base unit
+	    double sumInches = thisInches + thatInches;
+
+	    // Convert sum to target unit
+	    double result = targetUnit.fromInches(sumInches);
+
+	    return new Length(result, targetUnit);
+	}
 	 
 }

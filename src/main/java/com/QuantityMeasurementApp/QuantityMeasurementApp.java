@@ -1,64 +1,60 @@
 package com.QuantityMeasurementApp;
+
 /*
- * UC 6 : Unit Addition
+ * UC7: Addition with Target Unit Specification
  */
+
 public class QuantityMeasurementApp {
- 
-    public static boolean demonstrateLengthEquality(Length length1, Length length2) {
-        boolean isEqual = length1.equals(length2);
 
-        if (isEqual) {
-            System.out.println("The two length measurements are equal.");
-        } else {
-            System.out.println("The two length measurements are not equal.");
-        }
-
-        return isEqual;
-    }
- 
-    public static boolean demonstrateLengthComparison(double value1, Length.LengthUnit unit1,
-                                                      double value2, Length.LengthUnit unit2) {
-
-        Length length1 = new Length(value1, unit1);
-        Length length2 = new Length(value2, unit2);
-
-        return demonstrateLengthEquality(length1, length2);
-    }
- 
-    public static Length demonstrateLengthConversion(double value, Length.LengthUnit fromUnit,
-                                                     Length.LengthUnit toUnit) {
-
-        Length originalLength = new Length(value, fromUnit);
-        double convertedValue = originalLength.convertTo(toUnit);
-
-        System.out.println(value + " " + fromUnit + " = " + convertedValue + " " + toUnit);
-
-        return new Length(convertedValue, toUnit);
+    // UC1 Equality
+    public static boolean demonstrateLengthEquality(Length l1, Length l2) {
+        boolean equal = l1.equals(l2);
+        System.out.println("Equal? " + equal);
+        return equal;
     }
 
-    
-    public static Length demonstrateLengthConversion(Length length, Length.LengthUnit toUnit) {
-        double convertedValue = length.convertTo(toUnit);
-        return new Length(convertedValue, toUnit);
+    // UC3 Conversion
+    public static Length demonstrateLengthConversion(double value, Length.LengthUnit from,
+                                                     Length.LengthUnit to) {
+        Length l = new Length(value, from);
+        double converted = l.convertTo(to);
+        System.out.println(value + " " + from + " = " + converted + " " + to);
+        return new Length(converted, to);
     }
 
-    public static Length demonstrateLengthAddition(Length length1, Length length2) {
-        Length result = length1.add(length2);
+    // UC6 Addition (default target = first operand unit)
+    public static Length demonstrateLengthAddition(Length l1, Length l2) {
+        Length result = l1.add(l2);
         System.out.println("Sum = " + result);
+        return result;
+    }
+
+    // UC7 Addition with Explicit Target Unit
+    public static Length demonstrateLengthAddition(Length l1, Length l2,
+                                                   Length.LengthUnit targetUnit) {
+        Length result = l1.add(l2, targetUnit);
+        System.out.println("Sum in " + targetUnit + " = " + result);
         return result;
     }
  
     public static void main(String[] args) {
 
-        // Equality demo
-        demonstrateLengthComparison(1.0, Length.LengthUnit.FEET, 12.0, Length.LengthUnit.INCHES);
-
-        // Conversion demo
-        demonstrateLengthConversion(1.0, Length.LengthUnit.YARDS, Length.LengthUnit.FEET);
-
-        // Addition demo
         Length l1 = new Length(1.0, Length.LengthUnit.FEET);
         Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length l3 = new Length(1.0, Length.LengthUnit.YARDS);
+        Length l4 = new Length(3.0, Length.LengthUnit.FEET);
+
+        // UC6 demo
         demonstrateLengthAddition(l1, l2);
+
+        // UC7 demos
+        demonstrateLengthAddition(l1, l2, Length.LengthUnit.FEET);
+        demonstrateLengthAddition(l1, l2, Length.LengthUnit.INCHES);
+        demonstrateLengthAddition(l1, l2, Length.LengthUnit.YARDS);
+
+        demonstrateLengthAddition(l3, l4, Length.LengthUnit.YARDS);
+        demonstrateLengthAddition(new Length(2.54, Length.LengthUnit.CENTIMETERS),
+                                  new Length(1.0, Length.LengthUnit.INCHES),
+                                  Length.LengthUnit.CENTIMETERS);
     }
 }

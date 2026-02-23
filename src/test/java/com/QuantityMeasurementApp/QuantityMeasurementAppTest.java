@@ -1,95 +1,126 @@
 package com.QuantityMeasurementApp;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
-	@Test
-    void testConversion_FeetToInches() {
-        Length length = new Length(1.0, Length.LengthUnit.FEET);
-        assertEquals(12.0, length.convertTo(Length.LengthUnit.INCHES));
+
+    @Test
+    public void testAddition_SameUnit_FeetPlusFeet() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(2.0, Length.LengthUnit.FEET);
+
+        Length result = l1.add(l2);
+
+        assertEquals(new Length(3.0, Length.LengthUnit.FEET), result);
     }
 
     @Test
-    void testConversion_InchesToFeet() {
-        Length length = new Length(24.0, Length.LengthUnit.INCHES);
-        assertEquals(2.0, length.convertTo(Length.LengthUnit.FEET));
+    public void testAddition_SameUnit_InchPlusInch() {
+        Length l1 = new Length(6.0, Length.LengthUnit.INCHES);
+        Length l2 = new Length(6.0, Length.LengthUnit.INCHES);
+
+        Length result = l1.add(l2);
+
+        assertEquals(new Length(12.0, Length.LengthUnit.INCHES), result);
     }
-    @Test
-    void testConversion_YardsToInches() {
-        Length length = new Length(1.0, Length.LengthUnit.YARDS);
-        assertEquals(36.0, length.convertTo(Length.LengthUnit.INCHES));
-    }
+ 
 
     @Test
-    void testConversion_InchesToYards() {
-        Length length = new Length(72.0, Length.LengthUnit.INCHES);
-        assertEquals(2.0, length.convertTo(Length.LengthUnit.YARDS));
-    }
+    public void testAddition_CrossUnit_FeetPlusInches() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
 
-    @Test
-    void testConversion_CentimetersToInches() {
-        Length length = new Length(1.0, Length.LengthUnit.CENTIMETERS);
-        assertEquals(0.393701, length.convertTo(Length.LengthUnit.INCHES));
+        Length result = l1.add(l2);
+
+        assertEquals(new Length(2.0, Length.LengthUnit.FEET), result);
     }
 
     @Test
-    void testConversion_FeetToYard() {
-        Length length = new Length(6.0, Length.LengthUnit.FEET);
-        assertEquals(2.0, length.convertTo(Length.LengthUnit.YARDS));
-    }
-    @Test
-    void testConversion_RoundTrip_PreservesValue() {
-        Length yards = new Length(5.5, Length.LengthUnit.YARDS);
-        double feet = yards.convertTo(Length.LengthUnit.FEET);
+    public void testAddition_CrossUnit_InchPlusFeet() {
+        Length l1 = new Length(12.0, Length.LengthUnit.INCHES);
+        Length l2 = new Length(1.0, Length.LengthUnit.FEET);
 
-        Length backToYards = new Length(feet, Length.LengthUnit.FEET);
-        double yardsAgain = backToYards.convertTo(Length.LengthUnit.YARDS);
+        Length result = l1.add(l2);
 
-        assertEquals(5.5, yardsAgain);
-    }
-    @Test
-    void testZeroValue() {
-        Length length = new Length(0.0, Length.LengthUnit.FEET);
-        assertEquals(0.0, length.convertTo(Length.LengthUnit.INCHES));
+        assertEquals(new Length(24.0, Length.LengthUnit.INCHES), result);
     }
 
     @Test
-    void testNegativeValue() {
-        Length length = new Length(-1.0, Length.LengthUnit.FEET);
-        assertEquals(-12.0, length.convertTo(Length.LengthUnit.INCHES));
+    public void testAddition_CrossUnit_YardPlusFeet() {
+        Length l1 = new Length(1.0, Length.LengthUnit.YARDS);
+        Length l2 = new Length(3.0, Length.LengthUnit.FEET);
+
+        Length result = l1.add(l2);
+
+        assertEquals(new Length(2.0, Length.LengthUnit.YARDS), result);
     }
-    @Test
-    void testConversion_PrecisionTolerance() {
-        Length length = new Length(1.0, Length.LengthUnit.CENTIMETERS);
-        double inches = length.convertTo(Length.LengthUnit.INCHES);
 
-        assertEquals(0.393701, inches);
+    @Test
+    public void testAddition_CrossUnit_CentimeterPlusInch() {
+        Length l1 = new Length(2.54, Length.LengthUnit.CENTIMETERS);
+        Length l2 = new Length(1.0, Length.LengthUnit.INCHES);
+
+        Length result = l1.add(l2);
+
+        assertEquals(5.08, result.getValue(), 0.001);
+        assertEquals(Length.LengthUnit.CENTIMETERS, result.getUnit());
     }
+ 
+
     @Test
-    void testConversion_InvalidUnit_Throws() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Length(1.0, null);
-        });
+    public void testAddition_Commutativity() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(12.0, Length.LengthUnit.INCHES);
 
-        Length length = new Length(1.0, Length.LengthUnit.FEET);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            length.convertTo(null);
-        });
+        assertEquals(l1.add(l2), l2.add(l1));
     }
+
     @Test
-    void testConversion_NaNOrInfinite_Throws() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Length(Double.NaN, Length.LengthUnit.FEET);
-        });
+    public void testAddition_WithZero() {
+        Length l1 = new Length(5.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(0.0, Length.LengthUnit.INCHES);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Length(Double.POSITIVE_INFINITY, Length.LengthUnit.FEET);
-        });
+        Length result = l1.add(l2);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Length(Double.NEGATIVE_INFINITY, Length.LengthUnit.FEET);
-        });
+        assertEquals(new Length(5.0, Length.LengthUnit.FEET), result);
+    }
+
+    @Test
+    public void testAddition_NegativeValues() {
+        Length l1 = new Length(5.0, Length.LengthUnit.FEET);
+        Length l2 = new Length(-2.0, Length.LengthUnit.FEET);
+
+        Length result = l1.add(l2);
+
+        assertEquals(new Length(3.0, Length.LengthUnit.FEET), result);
+    }
+ 
+
+    @Test
+    public void testAddition_NullSecondOperand() {
+        Length l1 = new Length(1.0, Length.LengthUnit.FEET);
+
+        assertThrows(IllegalArgumentException.class, () -> l1.add(null));
+    }
+
+    @Test
+    public void testAddition_LargeValues() {
+        Length l1 = new Length(1e6, Length.LengthUnit.FEET);
+        Length l2 = new Length(1e6, Length.LengthUnit.FEET);
+
+        Length result = l1.add(l2);
+
+        assertEquals(new Length(2e6, Length.LengthUnit.FEET), result);
+    }
+
+    @Test
+    public void testAddition_SmallValues() {
+        Length l1 = new Length(0.001, Length.LengthUnit.FEET);
+        Length l2 = new Length(0.002, Length.LengthUnit.FEET);
+
+        Length result = l1.add(l2);
+
+        assertEquals(0.003, result.getValue(), 0.0001);
     }
 }

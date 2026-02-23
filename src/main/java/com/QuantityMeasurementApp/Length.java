@@ -4,9 +4,19 @@ import java.util.Objects;
 
 public class Length {
 
+	// instance variable
 	private final double value;
 	private final LengthUnit unit;
+	
+	public double getValue() {
+	    return value;
+	}
 
+	public LengthUnit getUnit() {
+	    return unit;
+	}
+
+	// enum method for length units
 	public enum LengthUnit {
 		FEET(12.0),          // 1 ft = 12 in
 		INCHES(1.0),          // base unit
@@ -19,11 +29,17 @@ public class Length {
 			this.toInches = toInches;
 		}
 
-		public double toInches() {
-			return toInches;
+		public double toInches(double value) {
+			return value * toInches;
 		}
+
+		public double fromInches(double inches) {
+			return inches / toInches;
+		}
+		
 	}
 
+	// constructor to initialize length value and unit
 	public Length(double value, LengthUnit unit) {
 		if (unit == null) {
 			throw new IllegalArgumentException("Unit cannot be null");
@@ -35,22 +51,26 @@ public class Length {
 		this.unit = unit;
 	}
 
+	// convert given value to base value
 	private double convertToBase() {
-		return value * unit.toInches();
+		return unit.toInches(value);
 	}
 
+	// convert base value to given unit value
 	public double convertTo(LengthUnit targetUnit) {
 		if (targetUnit == null) {
 			throw new IllegalArgumentException("Target unit cannot be null");
 		}
-		double valueInInches = convertToBase();
-		return valueInInches / targetUnit.toInches();
+		double inches = convertToBase();
+		return targetUnit.fromInches(inches);
 	}
 
-	private boolean compare(Length thatLength) {
-		return Double.compare(this.convertToBase(), thatLength.convertToBase()) == 0;
+	// compare method
+	private boolean compare(Length that) {
+		return Double.compare(this.convertToBase(), that.convertToBase()) == 0;
 	}
 
+	// override given equals method
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -67,4 +87,20 @@ public class Length {
 	public int hashCode() {
 		return Objects.hash(convertToBase());
 	}
+
+	public Length add(Length thatLength) {
+		if (thatLength == null)
+			throw new IllegalArgumentException("Length cannot be null");
+
+		double thisInches = this.unit.toInches(this.value);
+		double thatInches = thatLength.unit.toInches(thatLength.value);
+
+		double sumInches = thisInches + thatInches;
+
+		// Convert back to this unit
+		double resultInOriginalUnit = this.unit.fromInches(sumInches);
+
+		return new Length(resultInOriginalUnit, this.unit);
+	}
+	 
 }

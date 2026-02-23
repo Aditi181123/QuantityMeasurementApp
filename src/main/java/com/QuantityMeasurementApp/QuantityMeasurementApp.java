@@ -28,8 +28,8 @@ public class QuantityMeasurementApp {
                                     12.0, Length.LengthUnit.INCHES);
 
         // Yards and Inches comparison
-        demonstrateLengthComparison(1.0, Length.LengthUnit.YARDS,
-                                    36.0, Length.LengthUnit.INCHES);
+        demonstrateLengthComparison(36.0, Length.LengthUnit.INCHES,
+                                    1.0, Length.LengthUnit.YARDS);
 
         // Centimeters and Inches comparison
         demonstrateLengthComparison(1.0, Length.LengthUnit.CENTIMETERS,

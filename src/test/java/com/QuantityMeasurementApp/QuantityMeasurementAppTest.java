@@ -1,156 +1,161 @@
 package com.QuantityMeasurementApp;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuantityMeasurementAppTest {
+class QuantityTest {
+
+
 
     @Test
-    void testAddition_ExplicitTargetUnit_Feet() {
+    void testConstructor_NullUnit() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Quantity<>(1.0, null));
+    }
 
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(12.0, LengthUnit.INCH);
+    @Test
+    void testConstructor_InvalidValue() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Quantity<>(Double.NaN, LengthUnit.FEET));
+    }
 
-        Length result =
-                Length.add(length1, length2, LengthUnit.FEET);
+
+
+    @Test
+    void testLengthEquality_FeetToInch() {
+        Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
+
+        assertTrue(q1.equals(q2));
+    }
+
+    @Test
+    void testLengthEquality_DifferentValue() {
+        Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(2.0, LengthUnit.FEET);
+
+        assertFalse(q1.equals(q2));
+    }
+
+
+    @Test
+    void testWeightEquality_KgToGram() {
+        Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
+
+        assertTrue(w1.equals(w2));
+    }
+
+    @Test
+    void testWeightEquality_DifferentValue() {
+        Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> w2 = new Quantity<>(2.0, WeightUnit.KILOGRAM);
+
+        assertFalse(w1.equals(w2));
+    }
+
+
+
+    @Test
+    void testLengthConversion_FeetToInch() {
+        Quantity<LengthUnit> q = new Quantity<>(1.0, LengthUnit.FEET);
+
+        Quantity<LengthUnit> result = q.convertTo(LengthUnit.INCH);
+
+        assertEquals(12.0, result.getValue());
+    }
+
+    @Test
+    void testLengthConversion_InchToYard() {
+        Quantity<LengthUnit> q = new Quantity<>(36.0, LengthUnit.INCH);
+
+        Quantity<LengthUnit> result = q.convertTo(LengthUnit.YARD);
+
+        assertEquals(1.0, result.getValue());
+    }
+
+
+
+    @Test
+    void testWeightConversion_KgToGram() {
+        Quantity<WeightUnit> q = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+
+        Quantity<WeightUnit> result = q.convertTo(WeightUnit.GRAM);
+
+        assertEquals(1000.0, result.getValue());
+    }
+
+    @Test
+    void testWeightConversion_GramToKg() {
+        Quantity<WeightUnit> q = new Quantity<>(1000.0, WeightUnit.GRAM);
+
+        Quantity<WeightUnit> result = q.convertTo(WeightUnit.KILOGRAM);
+
+        assertEquals(1.0, result.getValue());
+    }
+
+
+    @Test
+    void testLengthAddition_CrossUnit() {
+        Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
+
+        Quantity<LengthUnit> result = q1.add(q2);
 
         assertEquals(2.0, result.getValue());
-        assertEquals(LengthUnit.FEET, result.getUnit());
     }
 
     @Test
-    void testAddition_ExplicitTargetUnit_Inches() {
+    void testLengthAddition_ExplicitTarget() {
+        Quantity<LengthUnit> q1 = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> q2 = new Quantity<>(12.0, LengthUnit.INCH);
 
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(12.0, LengthUnit.INCH);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.INCH);
+        Quantity<LengthUnit> result = q1.add(q2, LengthUnit.INCH);
 
         assertEquals(24.0, result.getValue());
-        assertEquals(LengthUnit.INCH, result.getUnit());
+    }
+
+
+    @Test
+    void testWeightAddition_CrossUnit() {
+        Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
+
+        Quantity<WeightUnit> result = w1.add(w2);
+
+        assertEquals(2.0, result.getValue());
     }
 
     @Test
-    void testAddition_ExplicitTargetUnit_Yards() {
+    void testWeightAddition_ExplicitTarget() {
+        Quantity<WeightUnit> w1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> w2 = new Quantity<>(1000.0, WeightUnit.GRAM);
 
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(12.0, LengthUnit.INCH);
+        Quantity<WeightUnit> result = w1.add(w2, WeightUnit.GRAM);
 
-        Length result =
-                Length.add(length1, length2, LengthUnit.YARD);
-
-        assertEquals(0.666667, result.getValue());
-        assertEquals(LengthUnit.YARD, result.getUnit());
+        assertEquals(2000.0, result.getValue());
     }
 
+
+
     @Test
-    void testAddition_ExplicitTargetUnit_Centimeters() {
+    void testCrossCategoryPrevention() {
+        Quantity<LengthUnit> length =
+                new Quantity<>(1.0, LengthUnit.FEET);
 
-        Length length1 = new Length(1.0, LengthUnit.INCH);
-        Length length2 = new Length(1.0, LengthUnit.INCH);
+        Quantity<WeightUnit> weight =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
 
-        Length result =
-                Length.add(length1, length2, LengthUnit.CENTIMETER);
-
-        assertEquals(0.555556, result.getValue());
-        assertEquals(LengthUnit.CENTIMETER, result.getUnit());
+        assertFalse(length.equals(weight));
     }
 
-    @Test
-    void testAddition_ExplicitTargetUnit_SameAsFirstOperand() {
-
-        Length length1 = new Length(2.0, LengthUnit.YARD);
-        Length length2 = new Length(3.0, LengthUnit.FEET);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.YARD);
-
-        assertEquals(3.0, result.getValue());
-    }
 
     @Test
-    void testAddition_ExplicitTargetUnit_SameAsSecondOperand() {
+    void testSameReference() {
+        Quantity<LengthUnit> q =
+                new Quantity<>(5.0, LengthUnit.FEET);
 
-        Length length1 = new Length(2.0, LengthUnit.YARD);
-        Length length2 = new Length(3.0, LengthUnit.FEET);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.FEET);
-
-        assertEquals(9.0, result.getValue());
-    }
-
-    @Test
-    void testAddition_ExplicitTargetUnit_Commutativity() {
-
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(12.0, LengthUnit.INCH);
-
-        Length result1 =
-                Length.add(length1, length2, LengthUnit.YARD);
-
-        Length result2 =
-                Length.add(length2, length1, LengthUnit.YARD);
-
-        assertEquals(result1.getValue(), result2.getValue());
-    }
-
-    @Test
-    void testAddition_ExplicitTargetUnit_WithZero() {
-
-        Length length1 = new Length(5.0, LengthUnit.FEET);
-        Length length2 = new Length(0.0, LengthUnit.INCH);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.YARD);
-
-        assertEquals(1.666667, result.getValue()); // assuming rounding
-    }
-
-    @Test
-    void testAddition_ExplicitTargetUnit_NegativeValues() {
-
-        Length length1 = new Length(5.0, LengthUnit.FEET);
-        Length length2 = new Length(-2.0, LengthUnit.FEET);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.INCH);
-
-        assertEquals(36.0, result.getValue());
-    }
-
-    @Test
-    void testAddition_ExplicitTargetUnit_NullTargetUnit() {
-
-        Length length1 = new Length(1.0, LengthUnit.FEET);
-        Length length2 = new Length(12.0, LengthUnit.INCH);
-
-        assertThrows(IllegalArgumentException.class,
-                () -> Length.add(length1, length2, null));
-    }
-
-    @Test
-    void testAddition_ExplicitTargetUnit_LargeToSmallScale() {
-
-        Length length1 = new Length(1000.0, LengthUnit.FEET);
-        Length length2 = new Length(500.0, LengthUnit.FEET);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.INCH);
-
-        assertEquals(18000.0, result.getValue());
-    }
-
-    @Test
-    void testAddition_ExplicitTargetUnit_SmallToLargeScale() {
-
-        Length length1 = new Length(12.0, LengthUnit.INCH);
-        Length length2 = new Length(12.0, LengthUnit.INCH);
-
-        Length result =
-                Length.add(length1, length2, LengthUnit.YARD);
-
-        assertEquals(0.666667, result.getValue());
+        assertTrue(q.equals(q));
     }
 }

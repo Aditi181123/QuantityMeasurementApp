@@ -1,0 +1,14 @@
+# Eclipse files
+.settings/
+.project
+.classpath
+
+# Maven build output
+target/
+
+# Git internal (never track)
+.git/
+
+# Optional IDE folders
+.vscode/
+.idea/

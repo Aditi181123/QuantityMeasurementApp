@@ -40,6 +40,33 @@ public class Quantity<U extends IMeasurable> {
 
 
 
+    private void validateArithmeticOperands(Quantity<U> other, U targetUnit, boolean targetUnitRequired) {
+
+        if (other == null)
+            throw new IllegalArgumentException("Operand cannot be null");
+
+        if (!this.unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Incompatible quantity types");
+
+        if (!Double.isFinite(this.value) || !Double.isFinite(other.value))
+            throw new IllegalArgumentException("Invalid numeric value");
+
+        if (targetUnitRequired && targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+    }
+
+
+
+    private double performBaseArithmetic(Quantity<U> other, ArithmeticOperation operation) {
+
+        double base1 = this.toBase();
+        double base2 = other.toBase();
+
+        return operation.compute(base1, base2);
+    }
+
+
+
     public Quantity<U> convertTo(U targetUnit) {
 
         if (targetUnit == null)
@@ -52,77 +79,58 @@ public class Quantity<U extends IMeasurable> {
     }
 
 
-
     public Quantity<U> add(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Other cannot be null");
+        validateArithmeticOperands(other, unit, false);
 
-        double sumBase = this.toBase() + other.toBase();
-        double result = unit.convertFromBaseUnit(sumBase);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.ADD);
+        double result = unit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(round(result), unit);
     }
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Other cannot be null");
+        validateArithmeticOperands(other, targetUnit, true);
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
-
-        double sumBase = this.toBase() + other.toBase();
-        double result = targetUnit.convertFromBaseUnit(sumBase);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.ADD);
+        double result = targetUnit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(round(result), targetUnit);
     }
 
 
-
+    
     public Quantity<U> subtract(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Other cannot be null");
+        validateArithmeticOperands(other, unit, false);
 
-        double diffBase = this.toBase() - other.toBase();
-        double result = unit.convertFromBaseUnit(diffBase);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+        double result = unit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(round(result), unit);
     }
 
     public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Other cannot be null");
+        validateArithmeticOperands(other, targetUnit, true);
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
-
-        double diffBase = this.toBase() - other.toBase();
-        double result = targetUnit.convertFromBaseUnit(diffBase);
+        double resultBase = performBaseArithmetic(other, ArithmeticOperation.SUBTRACT);
+        double result = targetUnit.convertFromBaseUnit(resultBase);
 
         return new Quantity<>(round(result), targetUnit);
     }
 
 
-
     public double divide(Quantity<U> other) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Other cannot be null");
+        validateArithmeticOperands(other, null, false);
 
-        double base1 = this.toBase();
-        double base2 = other.toBase();
-
-        if (base2 == 0)
-            throw new ArithmeticException("Cannot divide by zero");
-
-        return round(base1 / base2);
+        return performBaseArithmetic(other, ArithmeticOperation.DIVIDE);
     }
 
 
-
+    
     @Override
     public boolean equals(Object obj) {
 

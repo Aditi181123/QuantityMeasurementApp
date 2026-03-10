@@ -3,9 +3,9 @@ package com.QuantityMeasurementApp;
 public enum LengthUnit implements IMeasurable {
 
     FEET(1.0),
-    INCH(1.0 / 12.0),
-    YARD(3.0),
-    CENTIMETER(0.0328084);
+    INCHES(1.0 / 12.0),
+    YARDS(3.0),
+    CENTIMETERS(0.0328084);
 
     private final double factor;
 

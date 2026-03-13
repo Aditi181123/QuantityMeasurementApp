@@ -9,4 +9,9 @@ public interface IMeasurable {
     double convertFromBaseUnit(double baseValue);
 
     String getUnitName();
+    
+    default void validSupport(String operation){
+
+    }
 }
+ 

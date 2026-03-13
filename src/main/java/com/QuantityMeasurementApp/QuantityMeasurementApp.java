@@ -13,7 +13,8 @@ public class QuantityMeasurementApp {
             System.out.println("1. Length");
             System.out.println("2. Weight");
             System.out.println("3. Volume");
-            System.out.println("4. Exit");
+            System.out.println("4. Temperature");
+            System.out.println("5. Exit");
 
             int category = sc.nextInt();
 
@@ -27,7 +28,10 @@ public class QuantityMeasurementApp {
                 case 3:
                     handleVolume();
                     break;
-                case 4:
+                case 4 :
+                	handleTemperature();
+                	break;
+                case 5:
                     System.out.println("Exiting...");
                     return;
                 default:
@@ -37,8 +41,7 @@ public class QuantityMeasurementApp {
     }
 
 
-
-    private static void handleLength() {
+	private static void handleLength() {
 
         System.out.println("\nSelect Operation");
         System.out.println("1 Conversion");
@@ -185,14 +188,64 @@ public class QuantityMeasurementApp {
         }
     }
 
+    private static void handleTemperature() {
+
+        System.out.println("\nSelect Operation");
+        System.out.println("1 Conversion");
+        System.out.println("2 Addition");
+        System.out.println("3 Subtraction");
+        System.out.println("4 Division");
+
+        int op = sc.nextInt();
+
+        System.out.println("Enter first value:");
+        double v1 = sc.nextDouble();
+
+        System.out.println("Select unit: 1 CELSIUS 2 FAHRENHEIT 3 KELVIN");
+        TemperatureUnit u1 = getTemperatureUnit(sc.nextInt());
+
+        Quantity<TemperatureUnit> q1 = new Quantity<>(v1, u1);
+
+        if (op == 1) {
+
+            System.out.println("Convert to unit: 1 CELSIUS 2 FAHRENHEIT 3 KELVIN");
+            TemperatureUnit target = getTemperatureUnit(sc.nextInt());
+
+            System.out.println("Result: " + q1.convertTo(target));
+
+        } else {
+
+            System.out.println("Enter second value:");
+            double v2 = sc.nextDouble();
+
+            System.out.println("Select second unit: 1 CELSIUS 2 FAHRENHEIT 3 KELVIN");
+            TemperatureUnit u2 = getTemperatureUnit(sc.nextInt());
+
+            Quantity<TemperatureUnit> q2 = new Quantity<>(v2, u2);
+
+            switch (op) {
+                case 2:
+                    System.out.println("Result: " + q1.add(q2));
+                    break;
+
+                case 3:
+                    System.out.println("Result: " + q1.subtract(q2));
+                    break;
+
+                case 4:
+                    System.out.println("Result: " + q1.divide(q2));
+                    break;
+            }
+        }
+    }
 
 
     private static LengthUnit getLengthUnit(int choice) {
         switch (choice) {
             case 1: return LengthUnit.FEET;
-            case 2: return LengthUnit.INCHES;
+            case 2: return LengthUnit.INCH;
             case 3: return LengthUnit.YARDS;
-            case 4: return LengthUnit.CENTIMETERS;
+            case 4: return LengthUnit.CENTIMETER;
             default: throw new IllegalArgumentException("Invalid unit");
         }
     }
@@ -211,6 +264,15 @@ public class QuantityMeasurementApp {
             case 1: return VolumeUnit.LITRE;
             case 2: return VolumeUnit.MILLILITRE;
             case 3: return VolumeUnit.GALLON;
+            default: throw new IllegalArgumentException("Invalid unit");
+        }
+    }
+    
+    private static TemperatureUnit getTemperatureUnit(int choice) {
+        switch (choice) {
+            case 1: return TemperatureUnit.CELSIUS;
+            case 2: return TemperatureUnit.FAHRENHEIT;
+            case 3: return TemperatureUnit.KELVIN;
             default: throw new IllegalArgumentException("Invalid unit");
         }
     }

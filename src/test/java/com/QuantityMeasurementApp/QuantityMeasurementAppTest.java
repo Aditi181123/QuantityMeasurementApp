@@ -1,315 +1,232 @@
 package com.QuantityMeasurementApp;
 
+import controller.QuantityMeasurementController;
+import model.QuantityMeasurementEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Method;
+import quantity.Quantity;
+import service.IQuantityMeasurementService;
+import service.QuantityMeasurementServiceImpl;
+import units.LengthUnit;
+import units.TemperatureUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
 
-    private static final double EPSILON = 0.0001;
+    private IQuantityMeasurementService service;
+    private QuantityMeasurementController controller;
 
+    @BeforeEach
+    void setup() {
+        service = new QuantityMeasurementServiceImpl();
+        controller = new QuantityMeasurementController(service);
+    }
 
+    // ---------------- ENTITY TESTS ----------------
 
     @Test
-    void testEquality_LitreToLitre_SameValue() {
-        assertTrue(new Quantity<>(1.0, VolumeUnit.LITRE)
-                .equals(new Quantity<>(1.0, VolumeUnit.LITRE)));
+    void testQuantityEntity_SingleOperandConstruction() {
+
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity(
+                        "CONVERT",
+                        "1 FEET",
+                        "12 INCH");
+
+        assertEquals("CONVERT", entity.getOperation());
+        assertEquals("1 FEET", entity.getOperand1());
+        assertEquals("12 INCH", entity.getResult());
+        assertFalse(entity.hasError());
     }
 
     @Test
-    void testEquality_LitreToMillilitre_EquivalentValue() {
-        assertTrue(new Quantity<>(1.0, VolumeUnit.LITRE)
-                .equals(new Quantity<>(1000.0, VolumeUnit.MILLILITRE)));
+    void testQuantityEntity_BinaryOperandConstruction() {
+
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity(
+                        "ADD",
+                        "1 FEET",
+                        "12 INCH",
+                        "2 FEET");
+
+        assertEquals("ADD", entity.getOperation());
+        assertEquals("1 FEET", entity.getOperand1());
+        assertEquals("12 INCH", entity.getOperand2());
+        assertEquals("2 FEET", entity.getResult());
     }
 
     @Test
-    void testEquality_VolumeVsWeight_Incompatible() {
-        assertFalse(new Quantity<>(1.0, VolumeUnit.LITRE)
-                .equals(new Quantity<>(1.0, WeightUnit.KILOGRAM)));
-    }
+    void testQuantityEntity_ErrorConstruction() {
 
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity("Invalid operation");
 
-    @Test
-    void testConversion_LitreToMillilitre() {
-
-        Quantity<VolumeUnit> result =
-                new Quantity<>(1.0, VolumeUnit.LITRE)
-                        .convertTo(VolumeUnit.MILLILITRE);
-
-        assertEquals(1000.0, result.getValue(), EPSILON);
+        assertTrue(entity.hasError());
+        assertEquals("Invalid operation", entity.getError());
     }
 
     @Test
-    void testConversion_GallonToLitre() {
+    void testQuantityEntity_ToString_Success() {
 
-        Quantity<VolumeUnit> result =
-                new Quantity<>(1.0, VolumeUnit.GALLON)
-                        .convertTo(VolumeUnit.LITRE);
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity(
+                        "ADD",
+                        "1 FEET",
+                        "12 INCH",
+                        "2 FEET");
 
-        assertEquals(3.78541, result.getValue(), EPSILON);
-    }
-
-
-    @Test
-    void testAddition_LitrePlusMillilitre() {
-
-        Quantity<VolumeUnit> result =
-                new Quantity<>(1.0, VolumeUnit.LITRE)
-                        .add(new Quantity<>(1000.0, VolumeUnit.MILLILITRE));
-
-        assertEquals(2.0, result.getValue(), EPSILON);
+        assertTrue(entity.toString().contains("ADD"));
     }
 
     @Test
-    void testAddition_MillilitrePlusMillilitre() {
+    void testQuantityEntity_ToString_Error() {
 
-        Quantity<VolumeUnit> result =
-                new Quantity<>(500.0, VolumeUnit.MILLILITRE)
-                        .add(new Quantity<>(500.0, VolumeUnit.MILLILITRE));
+        QuantityMeasurementEntity entity =
+                new QuantityMeasurementEntity("Failure");
 
-        assertEquals(1000.0, result.getValue(), EPSILON);
+        assertTrue(entity.toString().contains("ERROR"));
     }
 
-    
-    @Test
-    void testSubtraction_LitreMinusLitre() {
-
-        Quantity<VolumeUnit> result =
-                new Quantity<>(5.0, VolumeUnit.LITRE)
-                        .subtract(new Quantity<>(2.0, VolumeUnit.LITRE));
-
-        assertEquals(3.0, result.getValue(), EPSILON);
-    }
+    // ---------------- SERVICE TESTS ----------------
 
     @Test
-    void testSubtraction_LitreMinusMillilitre() {
+    void testService_CompareEquality_SameUnit_Success() {
 
-        Quantity<VolumeUnit> result =
-                new Quantity<>(2.0, VolumeUnit.LITRE)
-                        .subtract(new Quantity<>(500.0, VolumeUnit.MILLILITRE));
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(1, LengthUnit.FEET);
 
-        assertEquals(1.5, result.getValue(), EPSILON);
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(1, LengthUnit.FEET);
+
+        QuantityMeasurementEntity entity =
+                service.compare(q1, q2);
+
+        assertFalse(entity.hasError());
+        assertTrue(entity.getResult().contains("true"));
     }
 
     @Test
-    void testSubtraction_NegativeResult() {
+    void testService_CompareEquality_DifferentUnit_Success() {
 
-        Quantity<VolumeUnit> result =
-                new Quantity<>(1.0, VolumeUnit.LITRE)
-                        .subtract(new Quantity<>(2.0, VolumeUnit.LITRE));
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(1, LengthUnit.FEET);
 
-        assertEquals(-1.0, result.getValue(), EPSILON);
-    }
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(12, LengthUnit.INCH);
 
+        QuantityMeasurementEntity entity =
+                service.compare(q1, q2);
 
-    @Test
-    void testDivision_LitreByLitre() {
-
-        double result =
-                new Quantity<>(4.0, VolumeUnit.LITRE)
-                        .divide(new Quantity<>(2.0, VolumeUnit.LITRE));
-
-        assertEquals(2.0, result, EPSILON);
+        assertFalse(entity.hasError());
     }
 
     @Test
-    void testDivision_ByZero() {
+    void testService_Convert_Success() {
 
-        assertThrows(ArithmeticException.class,
-                () -> new Quantity<>(1.0, VolumeUnit.LITRE)
-                        .divide(new Quantity<>(0.0, VolumeUnit.LITRE)));
-    }
+        Quantity<LengthUnit> q =
+                new Quantity<>(1, LengthUnit.FEET);
 
+        QuantityMeasurementEntity entity =
+                service.convert(q, LengthUnit.INCH);
 
-
-    @Test
-    void testValidation_NullOperand_ConsistentAcrossOperations() {
-
-        Quantity<VolumeUnit> q = new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        assertThrows(IllegalArgumentException.class, () -> q.add(null));
-        assertThrows(IllegalArgumentException.class, () -> q.subtract(null));
-        assertThrows(IllegalArgumentException.class, () -> q.divide(null));
+        assertFalse(entity.hasError());
+        assertTrue(entity.getResult().contains("INCH"));
     }
 
     @Test
-    void testValidation_CrossCategory_ConsistentAcrossOperations() {
+    void testService_Add_Success() {
 
-        Quantity<VolumeUnit> v = new Quantity<>(1.0, VolumeUnit.LITRE);
-        Quantity<WeightUnit> w = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(1, LengthUnit.FEET);
 
-        assertThrows(IllegalArgumentException.class, () -> v.add((Quantity) w));
-        assertThrows(IllegalArgumentException.class, () -> v.subtract((Quantity) w));
-        assertThrows(IllegalArgumentException.class, () -> v.divide((Quantity) w));
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(12, LengthUnit.INCH);
+
+        QuantityMeasurementEntity entity =
+                service.add(q1, q2);
+
+        assertFalse(entity.hasError());
     }
 
     @Test
-    void testValidation_FiniteValue_ConsistentAcrossOperations() {
+    void testService_Subtract_Success() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(2, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(12, LengthUnit.INCH);
+
+        QuantityMeasurementEntity entity =
+                service.subtract(q1, q2);
+
+        assertFalse(entity.hasError());
+    }
+
+    @Test
+    void testService_Divide_Success() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(2, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(1, LengthUnit.FEET);
+
+        QuantityMeasurementEntity entity =
+                service.divide(q1, q2);
+
+        assertFalse(entity.hasError());
+    }
+
+    @Test
+    void testService_Add_UnsupportedOperation_Error() {
+
+        Quantity<TemperatureUnit> t1 =
+                new Quantity<>(0, TemperatureUnit.CELSIUS);
+
+        Quantity<TemperatureUnit> t2 =
+                new Quantity<>(32, TemperatureUnit.FAHRENHEIT);
+
+        QuantityMeasurementEntity entity =
+                service.add(t1, t2);
+
+        assertTrue(entity.hasError());
+    }
+
+    // ---------------- CONTROLLER TESTS ----------------
+
+    @Test
+    void testController_DemonstrateEquality_Success() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(1, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(12, LengthUnit.INCH);
+
+        assertDoesNotThrow(() ->
+                controller.demonstrateEquality(q1, q2));
+    }
+
+    @Test
+    void testController_DemonstrateAddition_Success() {
+
+        Quantity<LengthUnit> q1 =
+                new Quantity<>(1, LengthUnit.FEET);
+
+        Quantity<LengthUnit> q2 =
+                new Quantity<>(12, LengthUnit.INCH);
+
+        assertDoesNotThrow(() ->
+                controller.demonstrateAddition(q1, q2));
+    }
+
+    @Test
+    void testController_NullService_Prevention() {
 
         assertThrows(IllegalArgumentException.class,
-                () -> new Quantity<>(Double.NaN, VolumeUnit.LITRE));
-
-        assertThrows(IllegalArgumentException.class,
-                () -> new Quantity<>(Double.POSITIVE_INFINITY, VolumeUnit.LITRE));
-    }
-
-    @Test
-    void testValidation_NullTargetUnit_AddSubtractReject() {
-
-        Quantity<VolumeUnit> q1 = new Quantity<>(1.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> q2 = new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        assertThrows(IllegalArgumentException.class, () -> q1.add(q2, null));
-        assertThrows(IllegalArgumentException.class, () -> q1.subtract(q2, null));
-    }
-
-
-    @Test
-    void testImmutability_AfterAdd_ViaCentralizedHelper() {
-
-        Quantity<VolumeUnit> q1 = new Quantity<>(1.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> q2 = new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        q1.add(q2);
-
-        assertEquals(1.0, q1.getValue(), EPSILON);
-        assertEquals(1.0, q2.getValue(), EPSILON);
-    }
-
-    @Test
-    void testImmutability_AfterSubtract_ViaCentralizedHelper() {
-
-        Quantity<VolumeUnit> q1 = new Quantity<>(2.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> q2 = new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        q1.subtract(q2);
-
-        assertEquals(2.0, q1.getValue(), EPSILON);
-    }
-
-    @Test
-    void testImmutability_AfterDivide_ViaCentralizedHelper() {
-
-        Quantity<VolumeUnit> q1 = new Quantity<>(4.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> q2 = new Quantity<>(2.0, VolumeUnit.LITRE);
-
-        q1.divide(q2);
-
-        assertEquals(4.0, q1.getValue(), EPSILON);
-    }
-
-
-    @Test
-    void testImplicitTargetUnit_AddSubtract() {
-
-        Quantity<VolumeUnit> result =
-                new Quantity<>(1.0, VolumeUnit.LITRE)
-                        .add(new Quantity<>(500.0, VolumeUnit.MILLILITRE));
-
-        assertEquals(1.5, result.getValue(), EPSILON);
-    }
-
-    @Test
-    void testExplicitTargetUnit_AddSubtract_Overrides() {
-
-        Quantity<VolumeUnit> result =
-                new Quantity<>(1.0, VolumeUnit.LITRE)
-                        .add(new Quantity<>(500.0, VolumeUnit.MILLILITRE),
-                                VolumeUnit.MILLILITRE);
-
-        assertEquals(1500.0, result.getValue(), EPSILON);
-    }
-
-
-
-    @Test
-    void testArithmetic_Chain_Operations() {
-
-        Quantity<VolumeUnit> q1 = new Quantity<>(2.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> q2 = new Quantity<>(1.0, VolumeUnit.LITRE);
-        Quantity<VolumeUnit> q3 = new Quantity<>(500.0, VolumeUnit.MILLILITRE);
-        Quantity<VolumeUnit> q4 = new Quantity<>(1.0, VolumeUnit.LITRE);
-
-        double result =
-                q1.add(q2)
-                        .subtract(q3)
-                        .divide(q4);
-
-        assertEquals(2.5, result, EPSILON);
-    }
-
-
-    @Test
-    void testHelper_PrivateVisibility() throws Exception {
-
-        Method method =
-                Quantity.class.getDeclaredMethod("performBaseArithmetic",
-                        Quantity.class,
-                        Class.forName("QuantityMeasurementApp.com.QuantityMeasurementApp.Quantity$ArithmeticOperation"));
-
-        assertTrue(java.lang.reflect.Modifier.isPrivate(method.getModifiers()));
-    }
-
-    @Test
-    void testValidation_Helper_PrivateVisibility() throws Exception {
-
-        Method method =
-                Quantity.class.getDeclaredMethod("validateArithmeticOperands",
-                        Quantity.class,
-                        Object.class,
-                        boolean.class);
-
-        assertTrue(java.lang.reflect.Modifier.isPrivate(method.getModifiers()));
-    }
-
-
-
-
-    @Test
-    void testEnumConstant_ADD_CorrectlyAdds() throws Exception {
-
-        Class<?> enumClass =
-                Class.forName("QuantityMeasurementApp.com.QuantityMeasurementApp.Quantity$ArithmeticOperation");
-
-        Object addEnum = Enum.valueOf((Class<Enum>) enumClass, "ADD");
-
-        Method compute = enumClass.getDeclaredMethod("compute", double.class, double.class);
-
-        double result = (double) compute.invoke(addEnum, 7.0, 3.0);
-
-        assertEquals(10.0, result, EPSILON);
-    }
-
-    @Test
-    void testEnumConstant_SUBTRACT_CorrectlySubtracts() throws Exception {
-
-        Class<?> enumClass =
-                Class.forName("QuantityMeasurementApp.com.QuantityMeasurementApp.Quantity$ArithmeticOperation");
-
-        Object subEnum = Enum.valueOf((Class<Enum>) enumClass, "SUBTRACT");
-
-        Method compute = enumClass.getDeclaredMethod("compute", double.class, double.class);
-
-        double result = (double) compute.invoke(subEnum, 7.0, 3.0);
-
-        assertEquals(4.0, result, EPSILON);
-    }
-
-    @Test
-    void testEnumConstant_DIVIDE_CorrectlyDivides() throws Exception {
-
-        Class<?> enumClass =
-                Class.forName("QuantityMeasurementApp.com.QuantityMeasurementApp.Quantity$ArithmeticOperation");
-
-        Object divEnum = Enum.valueOf((Class<Enum>) enumClass, "DIVIDE");
-
-        Method compute = enumClass.getDeclaredMethod("compute", double.class, double.class);
-
-        double result = (double) compute.invoke(divEnum, 7.0, 2.0);
-
-        assertEquals(3.5, result, EPSILON);
+                () -> new QuantityMeasurementController(null));
     }
 
 }

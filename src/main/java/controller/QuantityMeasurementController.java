@@ -36,14 +36,4 @@ public class QuantityMeasurementController {
         QuantityMeasurementEntity result = service.add(q1, q2);
         displayResult(result);
     }
-
-    public void demonstrateSubtraction(Quantity<?> q1, Quantity<?> q2) {
-        QuantityMeasurementEntity result = service.subtract(q1, q2);
-        displayResult(result);
-    }
-
-    public void demonstrateDivision(Quantity<?> q1, Quantity<?> q2) {
-        QuantityMeasurementEntity result = service.divide(q1, q2);
-        displayResult(result);
-    }
 }

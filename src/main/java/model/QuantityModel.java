@@ -1,6 +1,7 @@
 package model;
 
 import quantity.Quantity;
+import measurable.IMeasurable;
 import units.*;
 
 public class QuantityModel {

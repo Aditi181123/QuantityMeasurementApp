@@ -1,54 +1,28 @@
 package com.app.QuantityMeasurementApp.service;
 
-import java.util.List;
 import com.app.QuantityMeasurementApp.DTO.*;
 
-/*
- *  SERVICE INTERFACE (BUSINESS LAYER CONTRACT)
- *
- *  Defines all operations:
- *    ✔ Compare
- *    ✔ Convert
- *    ✔ Arithmetic (Add, Subtract, Divide)
- *    ✔ History / Reporting
- *
- *  Implemented by:
- *    → QuantityMeasurementServiceImpl
- */
+import java.util.List;
 
 public interface IQuantityMeasurementService {
 
-    //  COMPARE
-    QuantityMeasurementDTO compare(QuantityDTO thisQ, QuantityDTO thatQ);
+    QuantityMeasurementDTO compareQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
 
-    //  CONVERT
-    QuantityMeasurementDTO convert(QuantityDTO thisQ, String targetUnit);
+    QuantityMeasurementDTO convertQuantity(QuantityDTO sourceQuantity, QuantityDTO targetQuantity);
 
-    //  ADD (Overloaded)
-    QuantityMeasurementDTO add(QuantityDTO thisQ, QuantityDTO thatQ);
-    QuantityMeasurementDTO add(QuantityDTO thisQ, QuantityDTO thatQ, String targetUnit);
+    QuantityMeasurementDTO addQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
 
-    //  SUBTRACT (Overloaded)
-    QuantityMeasurementDTO subtract(QuantityDTO thisQ, QuantityDTO thatQ);
-    QuantityMeasurementDTO subtract(QuantityDTO thisQ, QuantityDTO thatQ, String targetUnit);
+    QuantityMeasurementDTO subtractQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
 
-    //  DIVIDE
-    QuantityMeasurementDTO divide(QuantityDTO thisQ, QuantityDTO thatQ);
+    QuantityMeasurementDTO multiplyQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
 
-   
+    QuantityMeasurementDTO divideQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
 
-    //  Get all records
-    List<QuantityMeasurementDTO> getAllMeasurements();
+    List<QuantityMeasurementDTO> getOperationHistory(String operation);
 
-    //  Filter by operation (ADD, SUBTRACT, etc.)
-    List<QuantityMeasurementDTO> getMeasurementsByOperation(String operation);
+    List<QuantityMeasurementDTO> getMeasurementHistory(String measurementType);
 
-    //  Filter by measurement type (LengthUnit, etc.)
-    List<QuantityMeasurementDTO> getMeasurementsByType(String measurementType);
-
-    //  Get only error records
-    List<QuantityMeasurementDTO> getErrorHistory();
-
-    //  Count successful operations
     long getOperationCount(String operation);
+
+    List<QuantityMeasurementDTO> getErroredHistory();
 }

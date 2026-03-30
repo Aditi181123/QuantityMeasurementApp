@@ -1,85 +1,210 @@
 package com.app.QuantityMeasurementApp.DTO;
 
-import lombok.*;
-import java.util.*;
-import java.util.stream.*;
-
 import com.app.QuantityMeasurementApp.model.QuantityMeasurementEntity;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class QuantityMeasurementDTO {
-	// this quantity
-	private double thisValue;
-	private String thisUnit;
-	private String thisMeasurementType;
-	
-	// that quantity
-	private double thatValue;
-	private String thatUnit;
-	private String thatMeasurementType;
-	
-	private String operation;
-	
-	private double resultValue;
-	private String resultUnit;
-	private String resultMeasurementType;
-	
-	private String resultString;
-	
-	private String errormessage;
-	
-	@JsonProperty("error")
-	public boolean error;
-	
-	
-	/** JPA entity → DTO */
-    public static QuantityMeasurementDTO fromEntity(QuantityMeasurementEntity e) {
+    @JsonIgnore
+    private Long id;
+    private Double thisValue;
+    private String thisUnit;
+    private String thisMeasurementType;
+    private Double thatValue;
+    private String thatUnit;
+    private String thatMeasurementType;
+    private String operation;
+    private String resultString;
+    private Double resultValue;
+    private String resultUnit;
+    private String resultMeasurementType;
+    private String errorMessage;
+    private boolean error;
+    @JsonIgnore
+    private LocalDateTime createdAt;
+    @JsonIgnore
+    private LocalDateTime updatedAt;
+
+    public QuantityMeasurementDTO() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getThisValue() {
+        return thisValue;
+    }
+
+    public void setThisValue(Double thisValue) {
+        this.thisValue = thisValue;
+    }
+
+    public String getThisUnit() {
+        return thisUnit;
+    }
+
+    public void setThisUnit(String thisUnit) {
+        this.thisUnit = thisUnit;
+    }
+
+    public String getThisMeasurementType() {
+        return thisMeasurementType;
+    }
+
+    public void setThisMeasurementType(String thisMeasurementType) {
+        this.thisMeasurementType = thisMeasurementType;
+    }
+
+    public Double getThatValue() {
+        return thatValue;
+    }
+
+    public void setThatValue(Double thatValue) {
+        this.thatValue = thatValue;
+    }
+
+    public String getThatUnit() {
+        return thatUnit;
+    }
+
+    public void setThatUnit(String thatUnit) {
+        this.thatUnit = thatUnit;
+    }
+
+    public String getThatMeasurementType() {
+        return thatMeasurementType;
+    }
+
+    public void setThatMeasurementType(String thatMeasurementType) {
+        this.thatMeasurementType = thatMeasurementType;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getResultString() {
+        return resultString;
+    }
+
+    public void setResultString(String resultString) {
+        this.resultString = resultString;
+    }
+
+    public Double getResultValue() {
+        return resultValue;
+    }
+
+    public void setResultValue(Double resultValue) {
+        this.resultValue = resultValue;
+    }
+
+    public String getResultUnit() {
+        return resultUnit;
+    }
+
+    public void setResultUnit(String resultUnit) {
+        this.resultUnit = resultUnit;
+    }
+
+    public String getResultMeasurementType() {
+        return resultMeasurementType;
+    }
+
+    public void setResultMeasurementType(String resultMeasurementType) {
+        this.resultMeasurementType = resultMeasurementType;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public static QuantityMeasurementDTO fromEntity(QuantityMeasurementEntity entity) {
         QuantityMeasurementDTO dto = new QuantityMeasurementDTO();
-        dto.thisValue             = e.getThisValue();
-        dto.thisUnit              = e.getThisUnit();
-        dto.thisMeasurementType   = e.getThisMeasurementType();
-        dto.thatValue             = e.getThatValue();
-        dto.thatUnit              = e.getThatUnit();
-        dto.thatMeasurementType   = e.getThatMeasurementType();
-        dto.operation             = e.getOperation();
-        dto.resultString          = e.getResultString();
-        dto.resultValue           = e.getResultValue();
-        dto.resultUnit            = e.getResultUnit();
-        dto.resultMeasurementType = e.getResultMeasurementType();
-        dto.errormessage          = e.getErrorMessage();
-        dto.error                 = e.isError();
+        dto.setId(entity.getId());
+        dto.setThisValue(entity.getThisValue());
+        dto.setThisUnit(entity.getThisUnit());
+        dto.setThisMeasurementType(entity.getThisMeasurementType());
+        dto.setThatValue(entity.getThatValue());
+        dto.setThatUnit(entity.getThatUnit());
+        dto.setThatMeasurementType(entity.getThatMeasurementType());
+        dto.setOperation(entity.getOperation());
+        dto.setResultString(entity.getResultString());
+        dto.setResultValue(entity.getResultValue());
+        dto.setResultUnit(entity.getResultUnit());
+        dto.setResultMeasurementType(entity.getResultMeasurementType());
+        dto.setErrorMessage(entity.getErrorMessage());
+        dto.setError(entity.isError());
+        dto.setCreatedAt(entity.getCreatedAt());
+        dto.setUpdatedAt(entity.getUpdatedAt());
         return dto;
     }
 
-    /** DTO → JPA entity */
     public QuantityMeasurementEntity toEntity() {
-        QuantityMeasurementEntity e = new QuantityMeasurementEntity();
-        e.setThisValue(thisValue);
-        e.setThisUnit(thisUnit);
-        e.setThisMeasurementType(thisMeasurementType);
-        e.setThatValue(thatValue);
-        e.setThatUnit(thatUnit);
-        e.setThatMeasurementType(thatMeasurementType);
-        e.setOperation(operation);
-        e.setResultString(resultString);
-        e.setResultValue(resultValue);
-        e.setResultUnit(resultUnit);
-        e.setResultMeasurementType(resultMeasurementType);
-        e.setErrorMessage(errormessage);
-        e.setError(error);
-        return e;
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity();
+        entity.setId(id);
+        entity.setThisValue(thisValue);
+        entity.setThisUnit(thisUnit);
+        entity.setThisMeasurementType(thisMeasurementType);
+        entity.setThatValue(thatValue);
+        entity.setThatUnit(thatUnit);
+        entity.setThatMeasurementType(thatMeasurementType);
+        entity.setOperation(operation);
+        entity.setResultString(resultString);
+        entity.setResultValue(resultValue);
+        entity.setResultUnit(resultUnit);
+        entity.setResultMeasurementType(resultMeasurementType);
+        entity.setErrorMessage(errorMessage);
+        entity.setError(error);
+        entity.setCreatedAt(createdAt);
+        entity.setUpdatedAt(updatedAt);
+        return entity;
     }
 
-    /** List of entities → list of DTOs */
     public static List<QuantityMeasurementDTO> fromEntityList(List<QuantityMeasurementEntity> entities) {
-        return entities.stream()
-                .map(QuantityMeasurementDTO::fromEntity)
-                .collect(Collectors.toList());
+        return entities.stream().map(QuantityMeasurementDTO::fromEntity).toList();
     }
 
-	
+    public static List<QuantityMeasurementEntity> toEntityList(List<QuantityMeasurementDTO> dtos) {
+        return dtos.stream().map(QuantityMeasurementDTO::toEntity).toList();
+    }
 }

@@ -1,94 +1,64 @@
 package com.app.QuantityMeasurementApp.DTO;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
+import com.app.QuantityMeasurementApp.model.MeasurementType;
+import com.app.QuantityMeasurementApp.model.UnitDefinition;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-/*
- * 🔷 DTO (Data Transfer Object)
- *
- * 📌 Used to transfer data between:
- *    ✔ Controller ↔ Service
- *    ✔ Client ↔ Backend
- *
- * 📌 Contains VALIDATION annotations
- */
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class QuantityDTO {
 
-    //  THIS QUANTITY
+    @NotNull(message = "Value is required")
+    private Double value;
 
-    @NotNull(message = "Value cannot be null")
-    private Double thisValue;
+    @NotBlank(message = "Unit is required")
+    private String unit;
 
-    @NotEmpty(message = "Unit cannot be empty")
-    private String thisUnit;
+    @NotNull(message = "Measurement type is required")
+    private MeasurementType measurementType;
 
-    /*
-     *  @Pattern → restricts allowed values
-     */
-    @NotEmpty(message = "Measurement type cannot be empty")
-    @Pattern(
-        regexp = "LengthUnit|VolumeUnit|WeightUnit|TemperatureUnit",
-        message = "Measurement type must be one of: LengthUnit, VolumeUnit, WeightUnit, TemperatureUnit"
-    )
-    private String thisMeasurementType;   
+    public QuantityDTO() {
+    }
 
+    public QuantityDTO(Double value, String unit, MeasurementType measurementType) {
+        this.value = value;
+        this.unit = unit;
+        this.measurementType = measurementType;
+    }
 
-    //  THAT QUANTITY
+    public Double getValue() {
+        return value;
+    }
 
-    @NotNull(message = "Value cannot be null")
-    private Double thatValue;
+    public void setValue(Double value) {
+        this.value = value;
+    }
 
-    @NotEmpty(message = "Unit cannot be empty")
-    private String thatUnit;
+    public String getUnit() {
+        return unit;
+    }
 
-    @NotEmpty(message = "Measurement type cannot be empty")
-    @Pattern(
-        regexp = "LengthUnit|VolumeUnit|WeightUnit|TemperatureUnit",
-        message = "Measurement type must be one of: LengthUnit, VolumeUnit, WeightUnit, TemperatureUnit"
-    )
-    private String thatMeasurementType;   
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 
+    public MeasurementType getMeasurementType() {
+        return measurementType;
+    }
 
+    public void setMeasurementType(MeasurementType measurementType) {
+        this.measurementType = measurementType;
+    }
 
-    //  OPERATION
-
-    @NotEmpty(message = "Operation cannot be empty")
-    @Pattern(
-        regexp = "ADD|SUBTRACT|COMPARE|CONVERT",
-        message = "Operation must be one of: ADD, SUBTRACT, COMPARE, CONVERT"
-    )
-    private String operation;
-
-
-
-    //  CUSTOM VALIDATION
-
-    /*
-     *  @AssertTrue
-     *    ✔ Custom validation logic
-     *    ✔ Must return true for valid case
-     */
-    @AssertTrue(message = "Measurement types of both quantities must match")
-    public boolean isMeasurementTypeValid() {
-
-        // avoid NullPointerException
-        if (operation == null) return true;
-
-        switch (operation.toUpperCase()) {
-
-            case "ADD":
-            case "SUBTRACT":
-            case "COMPARE":
-            case "CONVERT":
-                return thisMeasurementType != null &&
-                       thisMeasurementType.equals(thatMeasurementType);
-
-            default:
-                return true;
+    @AssertTrue(message = "Unit must be valid for the specified measurement type")
+    public boolean isUnitValidForMeasurementType() {
+        if (unit == null || unit.isBlank() || measurementType == null) {
+            return true;
+        }
+        try {
+            return UnitDefinition.from(unit).matches(measurementType);
+        } catch (RuntimeException ex) {
+            return false;
         }
     }
 }

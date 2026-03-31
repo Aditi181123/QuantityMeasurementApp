@@ -10,7 +10,6 @@ A Java-based application that demonstrates progressively advanced object-oriente
 - [Use Cases](#use-cases)
 - [Key Design Principles](#key-design-principles)
 - [Supported Units](#supported-units)
-- [Usage Examples](#usage-examples)
 - [Testing](#testing)
 - [Project Structure](#project-structure)
 
@@ -103,6 +102,108 @@ Eliminates the duplication between `QuantityLength` and `QuantityWeight` by intr
 
 ---
 
+### UC11 – Volume Measurement (Liter, Milliliter, Gallon)
+Introduces a new VolumeUnit enum implementing IMeasurable, extending the system to support volume measurements alongside length and weight.
+
+**Conversions:**
+- 1 liter = 1000 milliliters
+- 1 gallon ≈ 3.78541 liters
+
+**Concepts:** Multi-category extensibility, interface reuse, scalability without modifying existing logic (OCP).
+
+---
+
+### UC12 – Subtraction and Division of Quantities
+Extends arithmetic support by introducing:
+
+- subtract(Quantity<U> other)
+- divide(double scalar)
+
+Subtraction works similarly to addition using base unit normalization. Division supports scalar-only operations.
+
+**Concepts:** Arithmetic consistency, immutability, method extension, code reuse.
+
+---
+
+### UC13 – Centralized Arithmetic Logic
+Refactors arithmetic operations (add, subtract, convert) into a dedicated service class (e.g., QuantityArithmeticService) instead of handling them inside the Quantity class.
+
+**Concepts:** Single Responsibility Principle (SRP), separation of concerns, cleaner domain model, improved maintainability.
+
+---
+
+### UC14 – Temperature Measurement (Celsius, Fahrenheit, Kelvin)
+Introduces TemperatureUnit enum with non-linear conversion logic (involving both scaling and offset).
+
+**Conversions:**
+- °F = (°C × 9/5) + 32
+- K = °C + 273.15
+
+Unlike other units, conversion is not purely multiplicative.
+
+**Concepts:** Handling non-linear transformations, real-world modeling complexity, abstraction flexibility.
+
+---
+
+### UC15 – N-Tier Architecture Implementation
+Refactors the application into a layered architecture:
+
+- Controller Layer – Handles API requests
+- Service Layer – Business logic
+- Repository Layer – Data persistence
+- Model Layer – Core domain classes
+
+**Concepts:** Layered architecture, separation of concerns, scalability, maintainability, enterprise design patterns.
+
+---
+
+### UC16 – Database Integration (Persistence Layer)
+Integrates a database using Spring Data JPA to persist measurement operations.
+
+**Introduces QuantityMeasurementEntity with fields such as:**
+- value
+- unit
+- operation type
+- result
+- timestamp
+
+**Concepts:** ORM (Object Relational Mapping), persistence, entity modeling, database interaction.
+
+---
+
+### UC17 – Spring Boot REST API Integration
+Exposes the application functionality via REST APIs.
+
+**Sample Endpoints:**
+- POST /convert → Convert between units
+- POST /add → Add two quantities
+- POST /subtract → Subtract quantities
+- GET /history → Fetch stored operations
+
+**Concepts:** RESTful services, API design, Spring Boot framework, controller-service interaction, real-world application deployment.
+
+---
+
+### UC18 – Spring Security with JWT and OAuth2 Authentication
+Integrates Spring Security to secure the application using JWT (JSON Web Token) and OAuth2 authentication (e.g., Google/GitHub login).
+
+**Introduces security components such as:**
+- SecurityConfig for configuring access rules
+- JwtUtil for token generation and validation
+- JwtFilter for request interception
+- UserDetailsService for loading user-specific data
+
+**Supports authentication flows including:**
+- JWT-based login with token generation
+- OAuth2-based third-party login
+
+**Secures endpoints like:**
+- /api/* → Requires authentication
+- /auth/login and /auth/register → Public access
+
+**Concepts:** Authentication vs Authorization, stateless security, JWT token lifecycle, OAuth2 protocol, Spring Security filter chain, secure API design.
+---
+
 ## Key Design Principles
 
 | Principle | Where Applied |
@@ -133,31 +234,19 @@ Eliminates the duplication between `QuantityLength` and `QuantityWeight` by intr
 | GRAM | 0.001 |
 | POUND | 0.453592 |
 
----
+### Volume
+| Unit | Conversion Factor (relative to L) |
+|---|---|
+| LITRE | 1.0 |
+| MILLILITRE | 0.001 |
+| GALLON | 3.78541 |
 
-## Usage Examples
-
-```java
-// Equality
-new Quantity<>(1.0, LengthUnit.FEET).equals(new Quantity<>(12.0, LengthUnit.INCHES)); // true
-new Quantity<>(1.0, WeightUnit.KILOGRAM).equals(new Quantity<>(1000.0, WeightUnit.GRAM)); // true
-new Quantity<>(1.0, VolumeUnit.LITRE).equals(new Quantity<>(1000.0, VolumeUnit.MILLILITRE)); // true
-
-// Conversion
-new Quantity<>(1.0, LengthUnit.FEET).convertTo(LengthUnit.INCHES);    // Quantity(12.0, INCHES)
-new Quantity<>(1.0, WeightUnit.KILOGRAM).convertTo(WeightUnit.GRAM);  // Quantity(1000.0, GRAM)
-new Quantity<>(1.0, VolumeUnit.GALLON).convertTo(VolumeUnit.LITRE);  // Quantity(3.79, LITRE)
-
-// Addition (implicit target unit = first operand's unit)
-new Quantity<>(1.0, LengthUnit.FEET).add(new Quantity<>(12.0, LengthUnit.INCHES));  // Quantity(2.0, FEET)
-
-// Addition (explicit target unit)
-new Quantity<>(1.0, LengthUnit.FEET).add(new Quantity<>(12.0, LengthUnit.INCHES), LengthUnit.YARDS); // Quantity(~0.67, YARDS)
-
-// Cross-category comparison (always false)
-new Quantity<>(1.0, LengthUnit.FEET).equals(new Quantity<>(1.0, WeightUnit.KILOGRAM)); // false
-```
-
+### Temperature
+| Unit | Conversion Factor (relative to C)|
+|---|---|
+| Celcius | c|
+| Fahernite | (c * 9 / 5) + 32 |
+| Kelvin | c + 273.15 |
 ---
 
 ## Testing
@@ -182,16 +271,48 @@ Each use case includes comprehensive JUnit test coverage following the **given-w
 ## Project Structure
 
 ```
-src/
-├── main/java/
-│   ├── IMeasurable.java
-│   ├── LengthUnit.java
-│   ├── WeightUnit.java
-│   ├── VolumeUnit.java
-│   ├── Quantity.java
-│   └── QuantityMeasurementApp.java
-└── test/java/
-    └── QuantityMeasurementAppTest.java
+
+QuantityMeasurementApp
+|
++--main (branch)
+|  +- README file
+|
++--dev(branch)
+|  
++--feature/UC1-FeetEquality
+    
++--feature/UC2-IncheEquality
+    
++--feature/UC3-GenericLength
+   
++--feature/UC4-YardEquality
+    
++--feature/UC5-Unit-to-UnitConversion
+   
++--feature/UC6-UnitAddition
+    
++--feature/UC7-Unit-Specification-Addition
+   
++--feature/UC8-Standalone-Conversion
+  
++--feature/UC9-WeightMeasurement
+  
++--feature/UC10-GenericQuantity
+   
++--feature/UC11-VolumeMeasurement
+  
++--feature/UC12-UnitSubtractionAndDivision
+   
++--feature/UC13-CenterlizedArthmeticLogic
+
++--feature/UC14-TemperatureMeasurement
+  
++--feature/UC15-NTier
+   
++--feature/UC16-DatabaseConnection
+
++--feature/UC17-SpringFrameworkIntegration
+
 ```
 
 ---

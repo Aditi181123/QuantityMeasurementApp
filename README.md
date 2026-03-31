@@ -202,6 +202,7 @@ Integrates Spring Security to secure the application using JWT (JSON Web Token) 
 - /auth/login and /auth/register → Public access
 
 **Concepts:** Authentication vs Authorization, stateless security, JWT token lifecycle, OAuth2 protocol, Spring Security filter chain, secure API design.
+
 ---
 
 ## Key Design Principles

@@ -1,35 +1,35 @@
 package com.app.QuantityMeasurementApp.service;
 
-import com.app.QuantityMeasurementApp.DTO.*;
+import com.app.QuantityMeasurementApp.DTO.QuantityMeasurementDTO;
+import com.app.QuantityMeasurementApp.DTO.QuantityDTO;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
 public interface IQuantityMeasurementService {
 
-    QuantityMeasurementDTO compareQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
+    // PUBLIC OPERATIONS
+    QuantityMeasurementDTO compareQuantities(QuantityDTO q1, QuantityDTO q2);
 
-    QuantityMeasurementDTO convertQuantity(QuantityDTO sourceQuantity, QuantityDTO targetQuantity);
+    QuantityMeasurementDTO convertQuantity(QuantityDTO from, QuantityDTO to);
 
-    QuantityMeasurementDTO addQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
+    QuantityMeasurementDTO addQuantities(QuantityDTO q1, QuantityDTO q2);
 
-    QuantityMeasurementDTO subtractQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
+    QuantityMeasurementDTO subtractQuantities(QuantityDTO q1, QuantityDTO q2);
 
-    QuantityMeasurementDTO multiplyQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
+    QuantityMeasurementDTO multiplyQuantities(QuantityDTO q1, QuantityDTO q2);
 
-    QuantityMeasurementDTO divideQuantities(QuantityDTO thisQuantity, QuantityDTO thatQuantity);
+    QuantityMeasurementDTO divideQuantities(QuantityDTO q1, QuantityDTO q2);
 
-    List<QuantityMeasurementDTO> getOperationHistory(String operation);
+    // HISTORY (AUTH REQUIRED)
+    List<QuantityMeasurementDTO> getAllUserHistory(Authentication authentication);
 
-    List<QuantityMeasurementDTO> getMeasurementHistory(String measurementType);
+    List<QuantityMeasurementDTO> getUserOperationHistory(String operation, Authentication authentication);
 
+    List<QuantityMeasurementDTO> getUserMeasurementHistory(String type, Authentication authentication);
+
+    List<QuantityMeasurementDTO> getUserErroredHistory(Authentication authentication);
+
+    // COUNT
     long getOperationCount(String operation);
-
-
-    List<QuantityMeasurementDTO> getUserOperationHistory(String operation);
-
-    List<QuantityMeasurementDTO> getUserMeasurementHistory(String measurementType);
-
-    List<QuantityMeasurementDTO> getUserErroredHistory();
-
-	List<QuantityMeasurementDTO> getErroredHistory();
 }

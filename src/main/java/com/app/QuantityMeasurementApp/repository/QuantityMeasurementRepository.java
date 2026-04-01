@@ -37,4 +37,20 @@ public interface QuantityMeasurementRepository extends JpaRepository<QuantityMea
     List<QuantityMeasurementEntity> findByUserAndErrorTrue(User user);
 
     long countByUserAndOperationIgnoreCaseAndErrorFalse(User user, String operation);
+
+    // 🔥 USERNAME-BASED METHODS
+    @Query("select q from QuantityMeasurementEntity q join q.user u where u.username = ?1")
+    List<QuantityMeasurementEntity> findByUsername(String username);
+
+    @Query("select q from QuantityMeasurementEntity q join q.user u where u.username = ?1 and upper(q.operation) = upper(?2)")
+    List<QuantityMeasurementEntity> findByUsernameAndOperation(String username, String operation);
+
+    @Query("select q from QuantityMeasurementEntity q join q.user u where u.username = ?1 and upper(q.thisMeasurementType) = upper(?2)")
+    List<QuantityMeasurementEntity> findByUsernameAndMeasurementType(String username, String measurementType);
+
+    @Query("select q from QuantityMeasurementEntity q join q.user u where u.username = ?1 and q.error = true")
+    List<QuantityMeasurementEntity> findByUsernameAndErroredTrue(String username);
+
+    @Query("select count(q) from QuantityMeasurementEntity q where upper(q.operation) = upper(?1)")
+    long countByOperation(String operation);
 }

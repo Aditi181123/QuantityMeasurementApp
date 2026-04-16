@@ -1,0 +1,58 @@
+# ╔═══════════════════════════════════════════════════════════════════════════════════╗
+# ║                         EUREKA SERVER CONFIGURATION                         ║
+# ║                                                                              ║
+# ║  Service Registry - Port 8761                                               ║
+# ║                                                                              ║
+# ║  Eureka Dashboard: http://localhost:8761                                     ║
+# ╚═══════════════════════════════════════════════════════════════════════════════════╝
+
+server:
+  port: 8761  # Eureka runs on port 8761
+
+spring:
+  application:
+    name: eureka-server
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Eureka Server Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+eureka:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Dashboard Settings
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  dashboard:
+    enabled: true  # Enable Eureka dashboard (web UI)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Server Settings
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  server:
+    # Disable self-preservation mode (for development)
+    # Self-preservation keeps expired instances registered during network issues
+    enable-self-preservation: false
+    
+    # Time to wait before evicting expired instances (ms)
+    eviction-interval-timer-in-ms: 5000
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Client Settings (Eureka Server is also a client to itself)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  client:
+    # Don't register with itself
+    register-with-eureka: false
+    
+    # Don't fetch registry from other Eureka servers
+    fetch-registry: false
+    
+    # Service URL for client communication (points to itself)
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Actuator Endpoints (for health checks)
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

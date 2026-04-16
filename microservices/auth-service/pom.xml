@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ╔═══════════════════════════════════════════════════════════════════════════════════╗
+    ║                              AUTH-SERVICE POM                                    ║
+    ║                                                                                ║
+    ║  Authentication microservice responsible for:                                  ║
+    ║  - User registration and login                                                ║
+    ║  - JWT token generation and validation                                         ║
+    ║  - OAuth2 Google authentication                                               ║
+    ║  - User session management                                                    ║
+    ╚═══════════════════════════════════════════════════════════════════════════════════╝
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Child inherits from parent POM -->
+    <parent>
+        <groupId>com.qm</groupId>
+        <artifactId>qma-microservices</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>auth-service</artifactId>
+    <name>Authentication Service</name>
+    <description>Handles authentication, JWT, and OAuth2</description>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         DEPENDENCIES
+         Each dependency serves a specific purpose:
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <dependencies>
+        <!-- 
+            Spring Boot Web
+            Provides: REST controllers, embedded Tomcat, HTTP client
+            Required for: Building REST APIs
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- 
+            Spring Security
+            Provides: Authentication, Authorization, Security filters
+            Required for: Protecting endpoints, JWT validation
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- 
+            Spring Data JPA
+            Provides: Repository pattern, ORM abstraction, HQL
+            Required for: Database operations
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- 
+            Spring Validation
+            Provides: @Valid, @NotNull, @NotBlank annotations
+            Required for: Input validation
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- 
+            H2 In-Memory Database
+            Provides: Lightweight SQL database for development
+            Alternative: MySQL, PostgreSQL for production
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- 
+            JWT (JSON Web Token) - API
+            Provides: Token creation, parsing interfaces
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+
+        <!-- 
+            JWT Implementation
+            Provides: Actual JWT signing/verification implementation
+            Runtime dependency - not needed at compile time
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- 
+            JWT JSON Serialization
+            Provides: Jackson integration for JWT claims
+        -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- 
+            Lombok
+            Provides: @Data, @Getter, @Setter, @Builder annotations
+            Reduces boilerplate code
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 
+            Spring Cloud Netflix Eureka Client
+            Enables this service to register with Eureka Server
+        -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Creates executable JAR -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Exclude Lombok from JAR - it's compile-time only -->
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

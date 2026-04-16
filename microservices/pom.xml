@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ╔═══════════════════════════════════════════════════════════════════════════════════╗
+    ║                           PARENT POM - ROOT CONFIGURATION                          ║
+    ║                                                                                   ║
+    ║  This is the Maven parent POM for the entire microservices architecture.         ║
+    ║  It defines all child modules, dependency versions, and build configurations.    ║
+    ╚═══════════════════════════════════════════════════════════════════════════════════╝
+    
+    Maven Coordinates:
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  groupId: com.qm                    - Organization prefix (Quantity Measure)   │
+    │  artifactId: qma-microservices      - Project name                            │
+    │  version: 1.0.0                      - Release version                          │
+    │  packaging: pom                      - Parent is POM, not JAR                   │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         PARENT COORDINATES
+         These identify this project in Maven repository and parent-child relationships
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <groupId>com.qm</groupId>
+    <artifactId>qma-microservices</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>Quantity Measurement App - Microservices</name>
+    <description>
+        5-Service Microservices Architecture:
+        - eureka-server: Service Discovery (Port 8761)
+        - api-gateway: Routing, CORS, JWT validation (Port 8080)
+        - auth-service: Authentication, JWT issuance, OAuth2 (Port 8081)
+        - qma-service: Quantity operations, History (Port 8082)
+        - Redis: Caching layer (Port 6379)
+    </description>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         CHILD MODULES
+         Each module is a separate microservice that will be built together
+         
+         BUILD ORDER (important!):
+         1. eureka-server   - Service discovery (start first!)
+         2. auth-service    - Authentication service
+         3. qma-service     - Core business logic
+         4. api-gateway     - Entry point, routes to other services
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <modules>
+        <module>eureka-server</module>
+        <module>auth-service</module>
+        <module>qma-service</module>
+        <module>api-gateway</module>
+    </modules>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         GLOBAL PROPERTIES
+         These variables are used throughout all child modules
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <properties>
+        <!-- 
+            Java 17 is the minimum for Spring Boot 3.x
+            Benefits: Records, pattern matching, sealed classes
+        -->
+        <java.version>17</java.version>
+        
+        <!-- 
+            Spring Boot 3.2.x - Latest stable with native AOT, observability improvements
+        -->
+        <spring-boot.version>3.2.0</spring-boot.version>
+        
+        <!-- 
+            Spring Cloud 2023.0 - Compatible with Spring Boot 3.2
+            Provides: Gateway, OpenFeign, LoadBalancing
+        -->
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
+    </properties>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         DEPENDENCY MANAGEMENT
+         
+         BOM (Bill of Materials) Pattern:
+         - Centralizes dependency versions
+         - Child modules inherit versions without specifying them
+         - Prevents version conflicts across services
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- 
+                Spring Boot BOM
+                Manages ALL Spring Framework dependencies
+                Example: Without this, we would need to specify:
+                spring-core version, spring-context version, spring-web version, etc.
+            -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <!-- 
+                    'import' scope: This BOM is merged into dependencyManagement
+                    This is the BOM pattern - all child modules inherit these versions
+                -->
+                <scope>import</scope>
+            </dependency>
+            
+            <!-- 
+                Spring Cloud BOM
+                Manages Spring Cloud components (Gateway, Feign, etc.)
+            -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+         BUILD CONFIGURATION
+         Applied to all child modules
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- 
+                    Spring Boot Maven Plugin
+                    Creates executable fat JAR with all dependencies
+                    Provides: mvn spring-boot:run for development
+                -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

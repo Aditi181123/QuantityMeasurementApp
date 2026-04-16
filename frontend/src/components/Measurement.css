@@ -1,0 +1,230 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Measurement Styles
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.measurement-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px;
+}
+
+.measurement-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Operations Grid
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.op-btn {
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  color: #666;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.op-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.op-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  color: white;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Type Selection
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.type-selection {
+  margin-bottom: 1.5rem;
+}
+
+.type-selection label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.type-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.type-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: white;
+  color: #666;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.type-btn:hover {
+  border-color: #667eea;
+}
+
+.type-btn.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Input Section
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.input-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.input-group input,
+.input-group select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Warnings
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.auth-warning {
+  background: #fff3cd;
+  color: #856404;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Calculate Button
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.calculate-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.calculate-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.calculate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Result Box
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.result-box {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.result-box h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.result-box p {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.result-box.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.result-box.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Note
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.note {
+  text-align: center;
+  color: #888;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Responsive
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 500px) {
+  .operations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .input-section {
+    grid-template-columns: 1fr;
+  }
+}

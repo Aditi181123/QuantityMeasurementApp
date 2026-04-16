@@ -1,0 +1,81 @@
+# ╔═══════════════════════════════════════════════════════════════════════════════════╗
+# ║                           AUTH-SERVICE CONFIGURATION                            ║
+# ║                                                                                ║
+# ║  Configuration for the authentication microservice                              ║
+# ║  Port: 8081 (auth-service)                                                     ║
+# ╚═══════════════════════════════════════════════════════════════════════════════════╝
+
+server:
+  port: 8081  # Auth-service runs on port 8081
+
+spring:
+  application:
+    name: auth-service  # Service name for discovery/monitoring
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # H2 Database Configuration
+  # In-memory database - data is lost on restart
+  # For production: replace with MySQL/PostgreSQL
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  datasource:
+    url: jdbc:h2:mem:authdb  # In-memory H2 database named 'authdb'
+    driver-class-name: org.h2.Driver  # H2 JDBC driver
+    username: sa  # Default H2 username
+    password:  # Default H2 password (empty)
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # H2 Console (for development debugging)
+  # Access at: http://localhost:8081/h2-console
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  h2:
+    console:
+      enabled: true  # Enable H2 web console
+      path: /h2-console  # URL path to access console
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # JPA/Hibernate Configuration
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  jpa:
+    hibernate:
+      ddl-auto: update  # Auto-create/update tables (use 'validate' in production)
+    show-sql: false  # Disable SQL logging (enable for debugging)
+    database-platform: org.hibernate.dialect.H2Dialect  # H2 SQL dialect
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# JWT Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+jwt:
+  # Secret key for signing JWT tokens
+  # IMPORTANT: Change this in production! Use environment variable.
+  # Minimum 256 bits (32 characters) for HS256 algorithm
+  secret: ${JWT_SECRET:QuantityMeasurementSecretKeyForJWTTokenGenerationMustBeLongEnough2024}
+  
+  # Token expiration time in milliseconds
+  # 86400000ms = 24 hours
+  expiration: 86400000
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Logging Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+logging:
+  level:
+    com.qm.auth: DEBUG  # Debug logging for this package
+    org.springframework.security: DEBUG  # Security framework logging
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Eureka Client Configuration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+eureka:
+  client:
+    # Register with Eureka Server
+    register-with-eureka: true
+    # Fetch registry from Eureka Server
+    fetch-registry: true
+    # URL of Eureka Server
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    # Prefer IP address over hostname
+    prefer-ip-address: true
+    # Send heartbeats more frequently for faster registration
+    lease-renewal-interval-in-seconds: 10
